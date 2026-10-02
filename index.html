@@ -107,6 +107,15 @@
 				let script_processor = audio_ctx.createScriptProcessor(AUDIO_BUFFERING, 0, 2);
 				script_processor.onaudioprocess = audio_callback;
 				script_processor.connect(audio_ctx.destination);
+
+				// Browsers block audio until a user gesture; resume on first interaction.
+				let resume_audio = () => {
+					audio_ctx.resume();
+					document.removeEventListener('click', resume_audio);
+					document.removeEventListener('keydown', resume_audio);
+				};
+				document.addEventListener('click', resume_audio);
+				document.addEventListener('keydown', resume_audio);
 			}
 
 			function nes_boot(rom_data){
@@ -144,11 +153,11 @@
 			document.addEventListener('keyup', (event) => {keyboard(nes.buttonUp, event)});
 		</script>
 
-		<script>window.onload = function(){nes_load_url("nes-canvas", "https://github.com/viktoras25/nes-hello/raw/master/dist/hello.nes");}</script>
+		<script>window.onload = function(){nes_load_url("nes-canvas", "dist/hello.nes");}</script>
 	</head>
 	<body>
 		<div style="margin: auto; width: 50%;">
-			<canvas id="nes-canvas" width="256" height="240" style="width: 100%"/>
+			<canvas id="nes-canvas" width="256" height="240" style="width: 100%"></canvas>
 		</div>
 	</body>
 </html>
